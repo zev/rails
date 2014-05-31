@@ -64,10 +64,46 @@ Please refer to the
 [Changelog](https://github.com/rails/rails/blob/4-2-stable/actionpack/CHANGELOG.md)
 for detailed changes.
 
+### Deprecations
+
+* "Soft deprecated" the `*_filter` family methods in favor of the `*_action`
+  family methods:
+
+      after_filter          => after_action
+      append_after_filter   => append_after_action
+      append_around_filter  => append_around_action
+      append_before_filter  => append_before_action
+      around_filter         => around_action
+      before_filter         => before_action
+      prepend_after_filter  => prepend_after_action
+      prepend_around_filter => prepend_around_action
+      prepend_before_filter => prepend_before_action
+      skip_after_filter     => skip_after_action
+      skip_around_filter    => skip_around_action
+      skip_before_filter    => skip_before_action
+      skip_filter           => skip_action_callback
+
+  If your application is depending on these methods, you should use the
+  replacement `*_action` methods instead.
+  ([Commit](https://github.com/rails/rails/commit/6c5f43bab8206747a8591435b2aa0ff7051ad3de))
+
 ### Notable changes
 
-* ...
-* ...
+* Added HTTP method `MKCALENDAR` from RFC-4791
+  ([Pull Request](https://github.com/rails/rails/pull/15121))
+
+* `*_fragment.action_controller` notifications now include the controller and action name
+  in the payload.
+  ([Pull Request](https://github.com/rails/rails/pull/14137))
+
+* Segments that are passed into URL helpers are now automatically escaped.
+  ([Commit](https://github.com/rails/rails/commit/5460591f0226a9d248b7b4f89186bd5553e7768f))
+
+* Improved Routing Error page with fuzzy matching for route search.
+  ([Pull Request](https://github.com/rails/rails/pull/14619))
+
+* Added option to disable logging of CSRF failures.
+  ([Pull Request](https://github.com/rails/rails/pull/14280))
 
 
 Action Mailer
