@@ -287,11 +287,6 @@ module ActiveRecord
       }
     end
 
-    # Placeholder so it can be overriden when needed by serialization
-    def attributes_for_coder # :nodoc:
-      attributes
-    end
-
     # Returns an <tt>#inspect</tt>-like string for the value of the
     # attribute +attr_name+. String attributes are truncated upto 50
     # characters, Date and Time attributes are returned in the
@@ -355,10 +350,12 @@ module ActiveRecord
     #   # => #<ActiveRecord::ConnectionAdapters::SQLite3Column:0x007ff4ab083980 @name="name", @sql_type="varchar(255)", @null=true, ...>
     #
     #   person.column_for_attribute(:nothing)
-    #   # => nil
+    #   # => #<ActiveRecord::ConnectionAdapters::Column:0xXXX @name=nil, @sql_type=nil, @cast_type=#<Type::Value>, ...>
     def column_for_attribute(name)
-      # FIXME: should this return a null object for columns that don't exist?
-      self.class.columns_hash[name.to_s]
+      name = name.to_s
+      self.class.columns_hash.fetch(name) do
+        ConnectionAdapters::Column.new(name, nil, Type::Value.new)
+      end
     end
 
     # Returns the value of the attribute identified by <tt>attr_name</tt> after it has been typecast (for example,
@@ -443,16 +440,16 @@ module ActiveRecord
 
     # Filters the primary keys and readonly attributes from the attribute names.
     def attributes_for_update(attribute_names)
-      attribute_names.select do |name|
-        column_for_attribute(name) && !readonly_attribute?(name)
+      attribute_names.reject do |name|
+        readonly_attribute?(name)
       end
     end
 
     # Filters out the primary keys, from the attribute names, when the primary
     # key is to be generated (e.g. the id attribute has no value).
     def attributes_for_create(attribute_names)
-      attribute_names.select do |name|
-        column_for_attribute(name) && !(pk_attribute?(name) && id.nil?)
+      attribute_names.reject do |name|
+        pk_attribute?(name) && id.nil?
       end
     end
 

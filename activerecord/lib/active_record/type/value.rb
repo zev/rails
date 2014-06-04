@@ -12,8 +12,8 @@ module ActiveRecord
         @limit = options[:limit]
       end
 
-      # The simplified that this object represents. Subclasses
-      # should override this method.
+      # The simplified type that this object represents. Subclasses
+      # must override this method.
       def type; end
 
       # Takes an input from the database, or from attribute setters,
@@ -54,7 +54,15 @@ module ActiveRecord
       def type_cast_for_write(value) # :nodoc:
         value
       end
-      alias_method :raw_type_cast_for_write, :type_cast_for_write # :internal:
+
+      # +old_value+ will always be type-cast.
+      # +new_value+ will come straight from the database
+      # or from assignment, so it could be anything. Types
+      # which cannot typecast arbitrary values should override
+      # this method.
+      def changed?(old_value, new_value) # :nodoc:
+        old_value != type_cast(new_value)
+      end
 
       private
 

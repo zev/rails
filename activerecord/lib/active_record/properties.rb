@@ -5,7 +5,7 @@ module ActiveRecord
     Type = ActiveRecord::Type
 
     included do
-      class_attribute :user_provided_columns, instance_accessor: false # :internal
+      class_attribute :user_provided_columns, instance_accessor: false # :internal:
       self.user_provided_columns = {}
     end
 
@@ -113,6 +113,7 @@ module ActiveRecord
         @columns_hash = nil
         @column_types = nil
         @column_defaults = nil
+        @raw_column_defaults = nil
         @column_names = nil
         @content_columns = nil
       end

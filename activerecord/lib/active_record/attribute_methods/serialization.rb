@@ -76,71 +76,12 @@ module ActiveRecord
       module Behavior # :nodoc:
         extend ActiveSupport::Concern
 
-        module ClassMethods # :nodoc:
-          def initialize_attributes(attributes, options = {})
-            serialized = (options.delete(:serialized) { true }) ? :serialized : :unserialized
-            super(attributes, options)
-
-            serialized_attributes.each do |key, coder|
-              if attributes.key?(key)
-                attributes[key] = Type::Serialized::Attribute.new(coder, attributes[key], serialized)
-              end
-            end
-
-            attributes
-          end
-        end
-
         def should_record_timestamps?
           super || (self.record_timestamps && (attributes.keys & self.class.serialized_attributes.keys).present?)
         end
 
         def keys_for_partial_write
           super | (attributes.keys & self.class.serialized_attributes.keys)
-        end
-
-        def _field_changed?(attr, old, value)
-          if self.class.serialized_attributes.include?(attr)
-            old != value
-          else
-            super
-          end
-        end
-
-        def read_attribute_before_type_cast(attr_name)
-          if self.class.serialized_attributes.include?(attr_name)
-            super.unserialized_value
-          else
-            super
-          end
-        end
-
-        def attributes_before_type_cast
-          super.dup.tap do |attributes|
-            self.class.serialized_attributes.each_key do |key|
-              if attributes.key?(key)
-                attributes[key] = attributes[key].unserialized_value
-              end
-            end
-          end
-        end
-
-        def typecasted_attribute_value(name)
-          if self.class.serialized_attributes.include?(name)
-            @raw_attributes[name].serialized_value
-          else
-            super
-          end
-        end
-
-        def attributes_for_coder
-          attribute_names.each_with_object({}) do |name, attrs|
-            attrs[name] = if self.class.serialized_attributes.include?(name)
-                            @raw_attributes[name].serialized_value
-                          else
-                            read_attribute(name)
-                          end
-          end
         end
       end
     end

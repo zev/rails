@@ -241,6 +241,14 @@ module ActiveRecord
         @column_defaults ||= Hash[columns.map { |c| [c.name, c.default] }]
       end
 
+      # Returns a hash where the keys are the column names and the values
+      # are the default values suitable for use in `@raw_attriubtes`
+      def raw_column_defaults # :nodoc:
+        @raw_column_defauts ||= Hash[column_defaults.map { |name, default|
+          [name, columns_hash[name].type_cast_for_write(default)]
+        }]
+      end
+
       # Returns an array of column names as strings.
       def column_names
         @column_names ||= columns.map { |column| column.name }
@@ -285,6 +293,7 @@ module ActiveRecord
 
         @arel_engine             = nil
         @column_defaults         = nil
+        @raw_column_defauts      = nil
         @column_names            = nil
         @column_types            = nil
         @content_columns         = nil
@@ -293,13 +302,6 @@ module ActiveRecord
         @relation                = nil
         @time_zone_column_names  = nil
         @cached_time_zone        = nil
-      end
-
-      # This is a hook for use by modules that need to do extra stuff to
-      # attributes when they are initialized. (e.g. attribute
-      # serialization)
-      def initialize_attributes(attributes, options = {}) #:nodoc:
-        attributes
       end
 
       private

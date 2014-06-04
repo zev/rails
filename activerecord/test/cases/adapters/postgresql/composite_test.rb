@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 require "cases/helper"
 require 'support/connection_helper'
-require 'active_record/base'
-require 'active_record/connection_adapters/postgresql_adapter'
 
 module PostgresqlCompositeBehavior
   include ConnectionHelper
@@ -93,6 +91,7 @@ class PostgresqlCompositeWithCustomOIDTest < ActiveRecord::TestCase
     end
 
     def type_cast_for_write(value)
+      return if value.nil?
       "(#{value.city},#{value.street})"
     end
   end

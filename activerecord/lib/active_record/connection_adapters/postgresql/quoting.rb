@@ -44,11 +44,6 @@ module ActiveRecord
             when 'json' then super(PostgreSQLColumn.json_to_string(value), column)
             else super
             end
-          when IPAddr
-            case sql_type
-            when 'inet', 'cidr' then super(PostgreSQLColumn.cidr_to_string(value), column)
-            else super
-            end
           when Float
             if value.infinite? && column.type == :datetime
               "'#{value.to_s.downcase}'"
@@ -66,7 +61,6 @@ module ActiveRecord
             end
           when String
             case sql_type
-            when 'bytea' then "'#{escape_bytea(value)}'"
             when 'xml'   then "xml '#{quote_string(value)}'"
             when /^bit/
               case value
@@ -110,26 +104,11 @@ module ActiveRecord
                 super(value, column)
               end
             end
-          when String
-            if 'bytea' == column.sql_type
-              # Return a bind param hash with format as binary.
-              # See http://deveiate.org/code/pg/PGconn.html#method-i-exec_prepared-doc
-              # for more information
-              { value: value, format: 1 }
-            else
-              super(value, column)
-            end
           when Hash
             case column.sql_type
             when 'hstore' then PostgreSQLColumn.hstore_to_string(value, array_member)
             when 'json' then PostgreSQLColumn.json_to_string(value)
             else super(value, column)
-            end
-          when IPAddr
-            if %w(inet cidr).include? column.sql_type
-              PostgreSQLColumn.cidr_to_string(value)
-            else
-              super(value, column)
             end
           else
             super(value, column)
@@ -182,6 +161,27 @@ module ActiveRecord
             value
           else
             quote(value, column)
+          end
+        end
+
+        private
+
+        def _quote(value)
+          if value.is_a?(Type::Binary::Data)
+            "'#{escape_bytea(value.to_s)}'"
+          else
+            super
+          end
+        end
+
+        def _type_cast(value)
+          if value.is_a?(Type::Binary::Data)
+            # Return a bind param hash with format as binary.
+            # See http://deveiate.org/code/pg/PGconn.html#method-i-exec_prepared-doc
+            # for more information
+            { value: value.to_s, format: 1 }
+          else
+            super
           end
         end
       end

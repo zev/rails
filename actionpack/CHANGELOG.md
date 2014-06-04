@@ -1,6 +1,6 @@
-*   Deprecate all *_filter callbacks in favor of *_action callbacks.
-
-    *Rafael Mendonça França*
+*   Routes specifying 'to:' must be a string that contains a "#" or a rack
+    application.  Use of a symbol should be replaced with `action: symbol`.
+    Use of a string without a "#" should be replaced with `controller: string`.
 
 *   Fix URL generation with `:trailing_slash` such that it does not add
     a trailing slash after `.:format`

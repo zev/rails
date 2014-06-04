@@ -103,7 +103,11 @@ module ActiveRecord
         uuid:        { name: "uuid" },
         json:        { name: "json" },
         ltree:       { name: "ltree" },
-        citext:      { name: "citext" }
+        citext:      { name: "citext" },
+        point:       { name: "point" },
+        bit:         { name: "bit" },
+        bit_varying: { name: "bit varying" },
+        money:       { name: "money" },
       }
 
       OID = PostgreSQL::OID #:nodoc:
@@ -432,8 +436,8 @@ module ActiveRecord
           m.alias_type 'name', 'varchar'
           m.alias_type 'bpchar', 'varchar'
           m.register_type 'bool', Type::Boolean.new
-          m.register_type 'bit', OID::Bit.new
-          m.alias_type 'varbit', 'bit'
+          register_class_with_limit m, 'bit', OID::Bit
+          register_class_with_limit m, 'varbit', OID::BitVarying
           m.alias_type 'timestamptz', 'timestamp'
           m.register_type 'date', OID::Date.new
           m.register_type 'time', OID::Time.new
@@ -507,55 +511,15 @@ module ActiveRecord
           # makes this method very very slow.
           return default unless default
 
-          # TODO: The default extraction is related to the cast-type.
-          # we should probably make a type_map lookup and cast the default-
-          # expression accordingly
-          if oid.type == :enum && default =~ /\A'(.*)'::/
-            return $1
-          end
-
           case default
-            when /\A'(.*)'::(num|date|tstz|ts|int4|int8)range\z/m
-              $1
+            # Quoted types
+            when /\A[\(B]?'(.*)'::/m
+              $1.gsub(/''/, "'")
+            # Boolean types
+            when 'true', 'false'
+              default
             # Numeric types
             when /\A\(?(-?\d+(\.\d*)?\)?(::bigint)?)\z/
-              $1
-            # Character types
-            when /\A\(?'(.*)'::.*\b(?:character varying|bpchar|text)\z/m
-              $1.gsub(/''/, "'")
-            # Binary data types
-            when /\A'(.*)'::bytea\z/m
-              $1
-            # Date/time types
-            when /\A'(.+)'::(?:time(?:stamp)? with(?:out)? time zone|date)\z/
-              $1
-            when /\A'(.*)'::interval\z/
-              $1
-            # Boolean type
-            when 'true'
-              true
-            when 'false'
-              false
-            # Geometric types
-            when /\A'(.*)'::(?:point|line|lseg|box|"?path"?|polygon|circle)\z/
-              $1
-            # Network address types
-            when /\A'(.*)'::(?:cidr|inet|macaddr)\z/
-              $1
-            # Bit string types
-            when /\AB'(.*)'::"?bit(?: varying)?"?\z/
-              $1
-            # XML type
-            when /\A'(.*)'::xml\z/m
-              $1
-            # Arrays
-            when /\A'(.*)'::"?\D+"?\[\]\z/
-              $1
-            # Hstore
-            when /\A'(.*)'::hstore\z/
-              $1
-            # JSON
-            when /\A'(.*)'::json\z/
               $1
             # Object identifier types
             when /\A-?\d+\z/

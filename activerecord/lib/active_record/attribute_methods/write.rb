@@ -53,11 +53,11 @@ module ActiveRecord
       # specified +value+. Empty strings for fixnum and float columns are
       # turned into +nil+.
       def write_attribute(attr_name, value)
-        write_attribute_with_type_cast(attr_name, value, :type_cast_for_write)
+        write_attribute_with_type_cast(attr_name, value, true)
       end
 
       def raw_write_attribute(attr_name, value)
-        write_attribute_with_type_cast(attr_name, value, :raw_type_cast_for_write)
+        write_attribute_with_type_cast(attr_name, value, false)
       end
 
       private
@@ -66,24 +66,26 @@ module ActiveRecord
         write_attribute(attribute_name, value)
       end
 
-      def write_attribute_with_type_cast(attr_name, value, type_cast_method)
+      def write_attribute_with_type_cast(attr_name, value, should_type_cast)
         attr_name = attr_name.to_s
         attr_name = self.class.primary_key if attr_name == 'id' && self.class.primary_key
         @attributes.delete(attr_name)
         column = column_for_attribute(attr_name)
 
+        unless has_attribute?(attr_name) || self.class.columns_hash.key?(attr_name)
+          raise ActiveModel::MissingAttributeError, "can't write unknown attribute `#{attr_name}'"
+        end
+
         # If we're dealing with a binary column, write the data to the cache
         # so we don't attempt to typecast multiple times.
-        if column && column.binary?
+        if column.binary?
           @attributes[attr_name] = value
         end
 
-        if column
-          @raw_attributes[attr_name] = column.public_send(type_cast_method, value)
-        elsif @raw_attributes.has_key?(attr_name)
-          @raw_attributes[attr_name] = value
+        if should_type_cast
+          @raw_attributes[attr_name] = column.type_cast_for_write(value)
         else
-          raise ActiveModel::MissingAttributeError, "can't write unknown attribute `#{attr_name}'"
+          @raw_attributes[attr_name] = value
         end
       end
     end
