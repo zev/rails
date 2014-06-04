@@ -64,7 +64,7 @@ for detailed changes.
 ### Removals
 
 * Removed support for setting the `to:` option of a router to a symbol or a
-  string that does not contain a `#` symbol:
+  string that does not contain a `#` character:
 
       get '/posts', to: MyRackApp    => (No change necessary)
       get '/posts', to: 'post#index' => (No change necessary)
