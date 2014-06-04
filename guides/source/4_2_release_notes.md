@@ -114,7 +114,6 @@ for detailed changes.
 ### Notable changes
 
 
-
 Active Record
 -------------
 
@@ -185,8 +184,8 @@ for detailed changes.
 
 ### Notable changes
 
-* ...
-* ...
+* Introduced `validate` as an alias for `valid?`.
+  ([Pull Request](https://github.com/rails/rails/pull/14456))
 
 
 Active Support
