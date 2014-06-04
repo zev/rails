@@ -134,13 +134,13 @@ for detailed changes.
 
 ### Deprecations
 
-* Deprecated using `joins`, `preload` and `eager_load` with associations that
+* Deprecated using `.joins`, `.preload` and `.eager_load` with associations that
   depends on the instance state (i.e. those defined with a scope that takes an
   argument) without replacement.
   ([Commit](https://github.com/rails/rails/commit/ed56e596a0467390011bc9d56d462539776adac1))
 
-* Deprecated passing Active Record objects to `find` or `exists?`. Call `#id` on
-  the objects first.
+* Deprecated passing Active Record objects to `.find` or `.exists?`. Call `#id`
+  on the objects first.
   (Commit [1](https://github.com/rails/rails/commit/d92ae6ccca3bcfd73546d612efaea011270bd270),
   [2](https://github.com/rails/rails/commit/d35f0033c7dec2b8d8b52058fb8db495d49596f7))
 
@@ -158,7 +158,7 @@ for detailed changes.
 
 ### Notable changes
 
-* Added `pretty_print` support for `ActiveRecord::Base` objects.
+* Added support for `#pretty_print` in `ActiveRecord::Base` objects.
   ([Pull Request](https://github.com/rails/rails/pull/15172))
 
 * PostgreSQL and SQLite adapters no longer add a default limit of 255 characters
@@ -171,10 +171,10 @@ for detailed changes.
   Rails 4.1.)
   ([Pull Request](https://github.com/rails/rails/pull/14569))
 
-* Introduced `validate` as an alias for `valid?`.
+* Introduced `#validate` as an alias for `#valid?`.
   ([Pull Request](https://github.com/rails/rails/pull/14456))
 
-* `touch` now accepts multiple attributes to be touched at once.
+* `#touch` now accepts multiple attributes to be touched at once.
   ([Pull Request](https://github.com/rails/rails/pull/14423))
 
 * Added support for fractional seconds for MySQL 5.6 and above.
@@ -195,7 +195,7 @@ for detailed changes.
 
 ### Notable changes
 
-* Introduced `validate` as an alias for `valid?`.
+* Introduced `#validate` as an alias for `#valid?`.
   ([Pull Request](https://github.com/rails/rails/pull/14456))
 
 
