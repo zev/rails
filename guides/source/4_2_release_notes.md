@@ -98,7 +98,6 @@ for detailed changes.
   (Commit [1](https://github.com/rails/rails/commit/6c5f43bab8206747a8591435b2aa0ff7051ad3de),
   [2](https://github.com/rails/rails/commit/489a8f2a44dc9cea09154ee1ee2557d1f037c7d4))
 
-
 * Added HTTP method `MKCALENDAR` from RFC-4791
   ([Pull Request](https://github.com/rails/rails/pull/15121))
 
@@ -140,7 +139,7 @@ for detailed changes.
   argument) without replacement.
   ([Commit](https://github.com/rails/rails/commit/ed56e596a0467390011bc9d56d462539776adac1))
 
-* Deprecated passing Active Record objects to `find` or `exists?`. Call `.id` on
+* Deprecated passing Active Record objects to `find` or `exists?`. Call `#id` on
   the objects first.
   (Commit [1](https://github.com/rails/rails/commit/d92ae6ccca3bcfd73546d612efaea011270bd270),
   [2](https://github.com/rails/rails/commit/d35f0033c7dec2b8d8b52058fb8db495d49596f7))
@@ -152,7 +151,7 @@ for detailed changes.
 
   The current solution of incrementing the beginning is not correct and is now
   deprecated. For subtypes where we don't know how to increment (e.g. `#succ`
-  is not defined) it will raise an ArgumentException for ranges with excluding
+  is not defined) it will raise an `ArgumentError` for ranges with excluding
   beginnings.
 
   ([Commit](https://github.com/rails/rails/commit/91949e48cf41af9f3e4ffba3e5eecf9b0a08bfc3))
@@ -162,8 +161,8 @@ for detailed changes.
 * Added `pretty_print` support for `ActiveRecord::Base` objects.
   ([Pull Request](https://github.com/rails/rails/pull/15172))
 
-* PostgreSQL adapter and SQLite adapter no longer adds a default limit of 255
-  characters on string columns.
+* PostgreSQL and SQLite adapters no longer add a default limit of 255 characters
+  on string columns.
   ([Pull Request](https://github.com/rails/rails/pull/14579))
 
 * `sqlite3:///some/path` now resolves to the absolute system path `/some/path`.
