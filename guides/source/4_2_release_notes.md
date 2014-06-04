@@ -61,6 +61,18 @@ Please refer to the
 [Changelog](https://github.com/rails/rails/blob/4-2-stable/actionpack/CHANGELOG.md)
 for detailed changes.
 
+### Removals
+
+* Removed support for setting the `to:` option of a router to a symbol or a
+  string that does not contain a `#` symbol:
+
+      get '/posts', to: MyRackApp    => (No change necessary)
+      get '/posts', to: 'post#index' => (No change necessary)
+      get '/posts', to: 'posts'      => get '/posts', controller: :posts
+      get '/posts', to: :index       => get '/posts', action: :index
+
+  ([Commit](https://github.com/rails/rails/commit/cc26b6b7bccf0eea2e2c1a9ebdcc9d30ca7390d9))
+
 ### Notable changes
 
 * The `*_filter` family methods has been removed from the documentation. Their
