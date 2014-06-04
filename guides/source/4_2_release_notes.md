@@ -3,9 +3,6 @@ Ruby on Rails 4.2 Release Notes
 
 Highlights in Rails 4.2:
 
-* ...
-* ...
-
 These release notes cover only the major changes. To know about various bug
 fixes and changes, please refer to the change logs or check out the
 [list of commits](https://github.com/rails/rails/commits/master) in the main
@@ -116,8 +113,6 @@ for detailed changes.
 
 ### Notable changes
 
-* ...
-* ...
 
 
 Active Record
@@ -127,11 +122,59 @@ Please refer to the
 [Changelog](https://github.com/rails/rails/blob/4-2-stable/activerecord/CHANGELOG.md)
 for detailed changes.
 
+### Deprecations
+
+* Deprecated using `joins`, `preload` and `eager_load` with associations that
+  depends on the instance state (i.e. those defined with a scope that takes an
+  argument) without replacement.
+  ([Commit](https://github.com/rails/rails/commit/ed56e596a0467390011bc9d56d462539776adac1))
+
+* Deprecated passing Active Record objects to `find` or `exists?`. Call `.id` on
+  the objects first.
+  (Commit [1](https://github.com/rails/rails/commit/d92ae6ccca3bcfd73546d612efaea011270bd270),
+  [2](https://github.com/rails/rails/commit/d35f0033c7dec2b8d8b52058fb8db495d49596f7))
+
+* Deprecated half-baked support for PostgreSQL range values with excluding
+  beginnings. We currently map PostgreSQL ranges to Ruby ranges. This conversion
+  is not fully possible because the Ruby range does not support excluded
+  beginnings.
+
+  The current solution of incrementing the beginning is not correct and is now
+  deprecated. For subtypes where we don't know how to increment (e.g. `#succ`
+  is not defined) it will raise an ArgumentException for ranges with excluding
+  beginnings.
+
+  ([Commit](https://github.com/rails/rails/commit/91949e48cf41af9f3e4ffba3e5eecf9b0a08bfc3))
+
 ### Notable changes
 
-* ...
-* ...
+* Added `pretty_print` support for `ActiveRecord::Base` objects.
+  ([Pull Request](https://github.com/rails/rails/pull/15172))
 
+* PostgreSQL adapter and SQLite adapter no longer adds a default limit of 255
+  characters on string columns.
+  ([Pull Request](https://github.com/rails/rails/pull/14579))
+
+* `sqlite3:///some/path` now resolves to the absolute system path `/some/path`.
+  For relative paths, use `sqlite3:some/path` instead. (Previously, `sqlite3:///some/path`
+  resolved to the relative path `some/path`. This behaviour was deprecated on
+  Rails 4.1.)
+  ([Pull Request](https://github.com/rails/rails/pull/14569))
+
+* Introduced `validate` as an alias for `valid?`.
+  ([Pull Request](https://github.com/rails/rails/pull/14456))
+
+* `touch` now accepts multiple attributes to be touched at once.
+  ([Pull Request](https://github.com/rails/rails/pull/14423))
+
+* Added support for fractional seconds for MySQL 5.6 and above.
+  (Pull Request [1](https://github.com/rails/rails/pull/8240), [2](https://github.com/rails/rails/pull/14359))
+
+* Added support for the `citext` column type in PostgreSQL adapter.
+  ([Pull Request](https://github.com/rails/rails/pull/12523))
+
+* Added support for user-created range types in PostgreSQL adapter.
+  ([Commit](https://github.com/rails/rails/commit/4cb47167e747e8f9dc12b0ddaf82bdb68c03e032))
 
 Active Model
 ------------
