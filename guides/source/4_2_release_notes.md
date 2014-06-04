@@ -64,10 +64,10 @@ Please refer to the
 [Changelog](https://github.com/rails/rails/blob/4-2-stable/actionpack/CHANGELOG.md)
 for detailed changes.
 
-### Deprecations
+### Notable changes
 
-* "Soft deprecated" the `*_filter` family methods in favor of the `*_action`
-  family methods:
+* The `*_filter` family methods has been removed from the documentation. Their
+  usage are discouraged in favor of the `*_action` family methods:
 
       after_filter          => after_action
       append_after_filter   => append_after_action
@@ -84,10 +84,11 @@ for detailed changes.
       skip_filter           => skip_action_callback
 
   If your application is depending on these methods, you should use the
-  replacement `*_action` methods instead.
-  ([Commit](https://github.com/rails/rails/commit/6c5f43bab8206747a8591435b2aa0ff7051ad3de))
+  replacement `*_action` methods instead. These methods will be deprecated in
+  the future and eventually removed from Rails.
+  (Commit [1](https://github.com/rails/rails/commit/6c5f43bab8206747a8591435b2aa0ff7051ad3de),
+  [2](https://github.com/rails/rails/commit/489a8f2a44dc9cea09154ee1ee2557d1f037c7d4))
 
-### Notable changes
 
 * Added HTTP method `MKCALENDAR` from RFC-4791
   ([Pull Request](https://github.com/rails/rails/pull/15121))
