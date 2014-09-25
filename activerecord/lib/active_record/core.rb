@@ -147,7 +147,7 @@ module ActiveRecord
         }
         record = s.execute([id], self, connection).first
         unless record
-          raise RecordNotFound, "Couldn't find #{name} with '#{primary_key}'=#{id}"
+          raise RecordNotFound.new(name, "with '#{primary_key}'=#{id}")
         end
         record
       end
@@ -181,7 +181,7 @@ module ActiveRecord
       end
 
       def find_by!(*args)
-        find_by(*args) or raise RecordNotFound
+        find_by(*args) or raise RecordNotFound.new(name, self.where)
       end
 
       def initialize_generated_modules

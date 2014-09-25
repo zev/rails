@@ -37,7 +37,7 @@ module ApplicationTests
       controller :foo, <<-RUBY
         class FooController < ActionController::Base
           def index
-            raise ActiveRecord::RecordNotFound
+            raise ActiveRecord::RecordNotFound.new(nil,nil)
           end
         end
       RUBY

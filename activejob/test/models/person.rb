@@ -6,7 +6,9 @@ class Person
   attr_reader :id
 
   def self.find(id)
-    raise RecordNotFound.new("Cannot find person with ID=404") if id.to_i==404
+    # THIS IS NOT AN AR ERROR
+    raise RecordNotFound.new("#{self.name} could not find id=#{id}") if id.to_i==404 # "Cannot find person with ID=404"
+    #raise ActiveRecord::RecordNotFound.new(self.name, "id=#{id}") if id.to_i==404 # "Cannot find person with ID=404"
     new(id)
   end
 

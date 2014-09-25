@@ -103,7 +103,7 @@ module ActiveRecord
     # Same as +take+ but raises <tt>ActiveRecord::RecordNotFound</tt> if no record
     # is found. Note that <tt>take!</tt> accepts no arguments.
     def take!
-      take or raise RecordNotFound.new("Couldn't find #{@klass.name} with [#{arel.where_sql}]")
+      take or raise RecordNotFound.new(@klass, arel.where_sql)
     end
 
     # Find the first record (or first N records if a parameter is supplied).
@@ -138,7 +138,7 @@ module ActiveRecord
     # Same as +first+ but raises <tt>ActiveRecord::RecordNotFound</tt> if no record
     # is found. Note that <tt>first!</tt> accepts no arguments.
     def first!
-      first or raise RecordNotFound.new("Couldn't find #{@klass.name} with [#{arel.where_sql}]")
+      first or raise RecordNotFound.new(@klass, arel.where_sql)
     end
 
     # Find the last record (or last N records if a parameter is supplied).
@@ -171,7 +171,7 @@ module ActiveRecord
     # Same as +last+ but raises <tt>ActiveRecord::RecordNotFound</tt> if no record
     # is found. Note that <tt>last!</tt> accepts no arguments.
     def last!
-      last or raise RecordNotFound.new("Couldn't find #{@klass.name} with [#{arel.where_sql}]")
+      last or raise RecordNotFound.new(@klass, arel.where_sql)
     end
 
     # Find the second record.
@@ -187,7 +187,7 @@ module ActiveRecord
     # Same as +second+ but raises <tt>ActiveRecord::RecordNotFound</tt> if no record
     # is found.
     def second!
-      second or raise RecordNotFound.new("Couldn't find #{@klass.name} with [#{arel.where_sql}]")
+      second or raise RecordNotFound.new(@klass, arel.where_sql)
     end
 
     # Find the third record.
@@ -203,7 +203,7 @@ module ActiveRecord
     # Same as +third+ but raises <tt>ActiveRecord::RecordNotFound</tt> if no record
     # is found.
     def third!
-      third or raise RecordNotFound.new("Couldn't find #{@klass.name} with [#{arel.where_sql}]")
+      third or raise RecordNotFound.new(@klass, arel.where_sql)
     end
 
     # Find the fourth record.
@@ -219,7 +219,7 @@ module ActiveRecord
     # Same as +fourth+ but raises <tt>ActiveRecord::RecordNotFound</tt> if no record
     # is found.
     def fourth!
-      fourth or raise RecordNotFound.new("Couldn't find #{@klass.name} with [#{arel.where_sql}]")
+      fourth or raise RecordNotFound.new(@klass, arel.where_sql)
     end
 
     # Find the fifth record.
@@ -235,7 +235,7 @@ module ActiveRecord
     # Same as +fifth+ but raises <tt>ActiveRecord::RecordNotFound</tt> if no record
     # is found.
     def fifth!
-      fifth or raise RecordNotFound.new("Couldn't find #{@klass.name} with [#{arel.where_sql}]")
+      fifth or raise RecordNotFound.new(@klass, arel.where_sql)
     end
 
     # Find the forty-second record. Also known as accessing "the reddit".
@@ -251,7 +251,7 @@ module ActiveRecord
     # Same as +forty_two+ but raises <tt>ActiveRecord::RecordNotFound</tt> if no record
     # is found.
     def forty_two!
-      forty_two or raise RecordNotFound.new("Couldn't find #{@klass.name} with [#{arel.where_sql}]")
+      forty_two or raise RecordNotFound.new(@klass, arel.where_sql)
     end
 
     # Returns +true+ if a record exists in the table that matches the +id+ or
@@ -320,13 +320,15 @@ module ActiveRecord
       conditions = " [#{conditions}]" if conditions
 
       if Array(ids).size == 1
-        error = "Couldn't find #{@klass.name} with '#{primary_key}'=#{ids}#{conditions}"
+        klass_name = @klass.name
+        error = "with '#{primary_key}'=#{ids}#{conditions}"
       else
-        error = "Couldn't find all #{@klass.name.pluralize} with '#{primary_key}': "
+        klass_name = "all #{@klass.name.pluralize}"
+        error = "with '#{primary_key}': "
         error << "(#{ids.join(", ")})#{conditions} (found #{result_size} results, but was looking for #{expected_size})"
       end
 
-      raise RecordNotFound, error
+      raise RecordNotFound.new(klass_name, error)
     end
 
     private
@@ -423,7 +425,7 @@ module ActiveRecord
 
       case ids.size
       when 0
-        raise RecordNotFound, "Couldn't find #{@klass.name} without an ID"
+        raise RecordNotFound.new(@klass,"without an ID")
       when 1
         result = find_one(ids.first)
         expects_array ? [ result ] : result

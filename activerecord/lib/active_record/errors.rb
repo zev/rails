@@ -47,6 +47,33 @@ module ActiveRecord
 
   # Raised when Active Record cannot find record by given id or set of ids.
   class RecordNotFound < ActiveRecordError
+    def initialize(klass, sql_or_msg = "")
+      super "Couldn't find #{klass} #{sql_or_msg}"
+    end
+
+    if false
+      #Ideas for other styles: ruby 2 named args
+      def initialize(klass: nil, sql: nil, msq: nil)
+        if msg
+          super msg
+        else
+          super "Couldn't find #{klass} #{sql}"
+        end
+      end
+
+      # ruby 1.9 style?
+      def initialize(options = {})
+        options = HashWithIndifferentAccess.new(options)
+        if options[:msg]
+          super options[:msg]
+        elsif options[:klass]
+          super "Couldn't find #{options[:klass]} #{options[:sql]}"
+        else
+          super()
+        end
+      end
+
+    end
   end
 
   # Raised by ActiveRecord::Base.save! and ActiveRecord::Base.create! methods when record cannot be

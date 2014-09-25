@@ -80,7 +80,7 @@ module ActiveRecord
         else
           if options[:inverse_of] && loaded?
             args_flatten = args.flatten
-            raise RecordNotFound, "Couldn't find #{scope.klass.name} without an ID" if args_flatten.blank?
+            raise RecordNotFound.new(scope.klass, "without an ID") if args_flatten.blank?
             result = find_by_scan(*args)
 
             result_size = Array(result).size
